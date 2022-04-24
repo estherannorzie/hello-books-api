@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, abort, make_response
 
 # create Book class
 class Book:
@@ -27,20 +27,22 @@ books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 
 # parameter of book_id must match the route parameter in decorator
 def get_book(book_id):
-    for book in books:
-            if book_id == book.id:
-                return (dict(id = book.id, 
-                            title = book.title, 
-                            description = book.description))
-    # 404 + response body is returned if no book is found
-    return {"message": f"book {book_id} not found"}, 404
+    book = validate_book(book_id)
 
+    return (dict(id = book.id, 
+                title = book.title, 
+                description = book.description))
+    
 
 def validate_book(book_id):
     try:
-    # must convert book id into integer
-        book_id = int(book_id)
-        get_book(book_id)
-    # if the book_id can't be converted into an int
+        book = int(book_id)
     except ValueError:
-        return {"message": f"book {book_id} invalid"}, 400       
+        abort(make_response({"message":f"book {book_id} invalid"}, 400))
+
+    for book in books:
+            if book_id == book.id:
+                return book
+    
+    # 404 + response body is returned if no book is found
+    abort(make_response({"message": f"book {book_id} not found"}, 404))
