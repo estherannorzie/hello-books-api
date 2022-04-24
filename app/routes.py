@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
 # create class
 class Book:
@@ -19,12 +19,14 @@ books = [
 # creating endpoint
 books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 
-# decorating function using endpoint
-@books_bp.route("", methods=["GET"])
-def get_all_books():
-    return jsonify([
-                    {"id": book.id, 
-                    "title": book.title, 
-                    "description": book.description} 
-                    for book in books
-        ])
+# "/<book_id>" is a route parameter
+@books_bp.route("/<book_id>", methods=["GET"])
+# parameter of book_id must match the route parameter in decorator
+def get_book(book_id):
+    # must convert book id into integer
+    book_id = int(book_id)
+    for book in books:
+        if book_id == book.id:
+            return (dict(id = book.id, 
+                        title = book.title, 
+                        description = book.description))
