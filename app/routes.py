@@ -18,6 +18,7 @@ def get_all_books():
         
         return jsonify(books_response)
 
+
 @books_bp.route("/<book_id>", methods=("GET",))
 def read_one_book(book_id):
         book = validate_book(book_id)
@@ -25,6 +26,25 @@ def read_one_book(book_id):
         return jsonify(dict(id=book.id,
                             title=book.title,
                             description=book.description))
+
+
+@books_bp.route("/<book_id>", methods=("PUT",))
+def update_book(book_id):
+    # get book id    
+    book = validate_book(book_id)
+
+    # turn the request body into a dictionary
+    request_body = request.get_json()
+    
+    # update the book instance's title and description
+    book.title = request_body["title"]
+    book.description = request_body["description"]
+
+    # commit the book instance into database
+    db.session.commit()
+
+    return make_response(f"Book #{book.id} successfully updated")
+
 
 def validate_book(book_id):
         try:
