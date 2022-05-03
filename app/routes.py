@@ -1,6 +1,6 @@
 from app import db
 from app.models.book import Book
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, jsonify, make_response, request, abort
 
 # creating endpoint
 books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
@@ -9,7 +9,7 @@ books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 # there is a comma near the methods arg since it's a tuple with one element, 
 # else python thinks it's a string
 @books_bp.route("", methods=("GET",))
-def get_all_books ():
+def get_all_books():
  # turns all instance of book into a list
         books = Book.query.all()
         books_response = [dict(id=book.id,
@@ -18,6 +18,27 @@ def get_all_books ():
         
         return jsonify(books_response)
 
+@books_bp.route("/<book_id>", methods=("GET",))
+def read_one_book(book_id):
+        book = validate_book(book_id)
+        # technically, doesn't need jsonify because flask converts to dict
+        return jsonify(dict(id=book.id,
+                            title=book.title,
+                            description=book.description))
+
+def validate_book(book_id):
+        try:
+                book_id = int(book_id)
+        except:
+                abort(make_response({"message":f"book {book_id} invalid"}, 400))
+
+        book = Book.query.get(book_id)
+
+        if not book:
+                abort(make_response({"message":f"book {book_id} not found"}, 404))
+
+        return book
+                
 
 @books_bp.route("", methods=("POST",))
 def create_book():
