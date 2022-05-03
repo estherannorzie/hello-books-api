@@ -46,18 +46,29 @@ def update_book(book_id):
     return make_response(f"Book #{book.id} successfully updated")
 
 
+@books_bp.route("/<book_id>", methods=("DELETE",))
+def delete_book(book_id):
+    book = validate_book(book_id)
+    
+    db.session.delete(book)
+    db.session.commit()
+
+    return make_response(f"Book #{book.id} successfully deleted.")
+
+
 def validate_book(book_id):
-        try:
-                book_id = int(book_id)
-        except:
-                abort(make_response({"message":f"book {book_id} invalid"}, 400))
+    try:
+        book_id = int(book_id)
+    # if the id is the wrong data type
+    except:
+        abort(make_response({"message":f"book {book_id} invalid"}, 400))
 
-        book = Book.query.get(book_id)
+    book = Book.query.get(book_id)
+    # if the id is the right data type but does not exist
+    if not book:
+        abort(make_response({"message":f"book {book_id} not found"}, 404))
 
-        if not book:
-                abort(make_response({"message":f"book {book_id} not found"}, 404))
-
-        return book
+    return book
                 
 
 @books_bp.route("", methods=("POST",))
