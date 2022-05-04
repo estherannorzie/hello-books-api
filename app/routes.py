@@ -10,6 +10,7 @@ books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 # else python thinks it's a string
 @books_bp.route("", methods=("GET",))
 def read_all_books():
+    # the title query value is case sensitive in Postman
     title_query = request.args.get("title")
     if title_query:
         books = Book.query.filter_by(title=title_query)
