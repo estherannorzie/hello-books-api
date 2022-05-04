@@ -5,27 +5,32 @@ from flask import Blueprint, jsonify, make_response, request, abort
 # creating endpoint
 books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 
-# decorating the endpoint
-# there is a comma near the methods arg since it's a tuple with one element, 
+# endpoints decorated
+# there is a comma near the methods arg since it's a tuple with one element. 
 # else python thinks it's a string
 @books_bp.route("", methods=("GET",))
-def get_all_books():
- # turns all instance of book into a list
+def read_all_books():
+    title_query = request.args.get("title")
+    if title_query:
+        books = Book.query.filter_by(title=title_query)
+    else:
+    # turns all instance of book into a list
         books = Book.query.all()
-        books_response = [dict(id=book.id,
-                               title=book.title, 
-                               description=book.description) for book in books]
+    
+    books_response = [dict(id=book.id,
+                           title=book.title, 
+                           description=book.description) for book in books]
         
-        return jsonify(books_response)
+    return jsonify(books_response)
 
 
 @books_bp.route("/<book_id>", methods=("GET",))
 def read_one_book(book_id):
-        book = validate_book(book_id)
-        # technically, doesn't need jsonify because flask converts to dict
-        return jsonify(dict(id=book.id,
-                            title=book.title,
-                            description=book.description))
+    book = validate_book(book_id)
+    # technically, doesn't need jsonify because flask converts to dict
+    return jsonify(dict(id=book.id,
+                        title=book.title,
+                        description=book.description))
 
 
 @books_bp.route("/<book_id>", methods=("PUT",))
