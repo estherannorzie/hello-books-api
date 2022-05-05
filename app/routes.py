@@ -9,7 +9,7 @@ books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 # there is a comma near the methods arg since it's a tuple with one element, 
 # else python thinks it's a string
 @books_bp.route("", methods=("GET",))
-def get_all_books():
+def read_all_books():
  # turns all instance of book into a list
         books = Book.query.all()
         books_response = [dict(id=book.id,
@@ -18,6 +18,7 @@ def get_all_books():
         
         return jsonify(books_response)
 
+
 @books_bp.route("/<book_id>", methods=("GET",))
 def read_one_book(book_id):
         book = validate_book(book_id)
@@ -25,6 +26,7 @@ def read_one_book(book_id):
         return jsonify(dict(id=book.id,
                             title=book.title,
                             description=book.description))
+
 
 def validate_book(book_id):
         try:
