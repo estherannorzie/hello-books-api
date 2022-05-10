@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, make_response, request, abort
 
 # creating endpoint
 books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
+authors_bp = Blueprint("authors_bp", __name__, url_prefix="/authors")
 
 # decorating the endpoint
 # there is a comma near the methods arg since it's a tuple with one element, 
