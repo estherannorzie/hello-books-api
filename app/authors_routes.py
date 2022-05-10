@@ -1,5 +1,5 @@
 from app import db
-from app.models.book import Book
+from app.models.author import Author
 from flask import Blueprint, jsonify, make_response, request, abort
 
 authors_bp = Blueprint("authors_bp", __name__, url_prefix="/authors")
