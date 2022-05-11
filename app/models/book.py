@@ -7,4 +7,5 @@ class Book(db.Model):
     description = db.Column(db.String)
     # authors can have many books (1 to many relationship)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
+    # back_populates expresses the explicit relationship between book and author
     author = db.relationship("Author", back_populates="books")
