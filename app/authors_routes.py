@@ -13,7 +13,7 @@ def read_all_authors():
     return jsonify(authors_response)
 
 
-@authors_bp.route("/<author_id>/books", methods=["GET"])
+@authors_bp.route("/<author_id>/books", methods=("GET",))
 def read_books(author_id):
 
     author = validate_author(author_id)
@@ -39,7 +39,7 @@ def create_author():
     return make_response(jsonify(f"Author {new_author.name} successfully created"), 201)
 
     
-@authors_bp.route("/<author_id>/books", methods=["POST"])
+@authors_bp.route("/<author_id>/books", methods=("POST",))
 def create_book(author_id):
 
     author = validate_author(author_id)
